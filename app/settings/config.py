@@ -13,6 +13,14 @@ class DefaultConfig:
     JWT_SECRET = 'TPmi4aLWRbyVq8zu9v82dWYW17/z+UvRnYTt4P6fAXA'  # 秘钥
     JWT_EXPIRE_DAYS = 14  # JWT过期时间
 
+    # 七牛云
+    QINIU_ACCESS_KEY = 'Z3n7VHTzWjjTxiSQc1cLlvtjdBjdG6yIsRYXim54'
+    QINIU_SECRET_KEY = 'OuU8PaON7VxJYiO7ER_uS_MIsx-PkmkgckiEDBeN'
+    QINIU_BUCKET_NAME = 'zhdsh35'
+    QINIU_DOMAIN = 'http://qc3o3ps8s.bkt.clouddn.com'
+
+    CORS = ['http://127.0.0.1:5000']
+
 
 config_dict = {
     'dev': DefaultConfig

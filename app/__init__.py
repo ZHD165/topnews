@@ -1,6 +1,8 @@
 import sys
 from os.path import *
 from flask import Flask
+from flask_cors import CORS
+
 from app.settings.config import config_dict
 
 
@@ -61,6 +63,11 @@ def register_extensions(app:Flask):
     from utils.middlewares import get_userinfo
     app.before_request(get_userinfo)
 
+    #
+    CORS(app, supports_credentials= True)
+
+    # 导入模型类
+    from models import user, article
 
 def register_bp(app: Flask):
     """注册蓝图"""

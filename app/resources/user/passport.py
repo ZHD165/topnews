@@ -1,18 +1,16 @@
 import datetime
 import random
-
 from flask import current_app
 from flask_restful.inputs import regex
 from flask_restful.reqparse import RequestParser
 from sqlalchemy.orm import load_only
-
 from flask_restful import Resource
-
 from app import redis_client, db
 from models.user import User
 from utils.constats import SMS_CODE_EXPIRE
 from utils.jwt_util import generate_jwt
 from utils.parser import mobile as mobile_type
+
 
 class SMSCodeResource(Resource):
     """获取短信验证码"""
@@ -59,8 +57,8 @@ class LoginResource(Resource):
             db.session.add(user)
         db.session.commit()
 
+        # 生成令牌
+        token = generate_jwt({'userid': user.id},
+                             datetime.utcnow() + datetime.timedelta(days=current_app.config['JWT_SECRET']))
 
-        #生成令牌
-        token =generate_jwt({'userid':user.id}, datetime.utcnow() + datetime.timedelta(days=current_app.config['JWT_SECRET']))
-
-        return {'toekn':token}, 201
+        return {'toekn': token}, 201
