@@ -7,7 +7,7 @@ from utils.decorators import login_required
 
 
 class CurrentUserResource(Resource):
-    method_decorators = {'get',[login_required]}
+    method_decorators = {'get':[login_required]}
 
     def get(self):
         # 获取用户信息

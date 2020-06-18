@@ -1,7 +1,8 @@
 #创建web 应用
+from app import create_app
 from flask import jsonify
 
-from app import create_app
+
 
 app = create_app('dev')
 
