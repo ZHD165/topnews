@@ -20,6 +20,7 @@ class DefaultConfig:
     QINIU_DOMAIN = 'http://qc3o3ps8s.bkt.clouddn.com'
 
     CORS = ['http://127.0.0.1:5000']
+    # CORS = ['http://0.0.0.0:8000']
 
 
 config_dict = {

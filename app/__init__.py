@@ -76,7 +76,8 @@ def register_bp(app: Flask):
     from app.resources.user import user_bp
     app.register_blueprint(user_bp)
 
-
+    from app.resources.article import  article_bp
+    app.register_blueprint(article_bp)
 
 
 

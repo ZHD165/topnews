@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime,timedelta
 import random
 from flask import current_app
 from flask_restful.inputs import regex
@@ -17,7 +17,8 @@ class SMSCodeResource(Resource):
 
     def get(self, mobile):
         # 1生成短信验证码
-        rand_num = '%06d' % random.randint(0, 999999)
+        # rand_num = '%06d' % random.randint(0, 999999)
+        rand_num = 123456
 
         # 2.保存验证码(redis)  app:(:相当于下划线)code：18838118792  123456
         key = 'app:code:{}'.format(mobile)
@@ -27,7 +28,7 @@ class SMSCodeResource(Resource):
         # print('短信验证码："mobile":{},"code":{}'.format(mobile, rand_num))
         print(f'短信验证码："mobile":{mobile},"code":{rand_num}')
         # 3.返回json给前段
-        return {'mobile': 'mobile'}
+        return {'mobile': mobile}
 
 
 class LoginResource(Resource):
@@ -36,8 +37,8 @@ class LoginResource(Resource):
     def post(self):
         # 获取参数
         parser = RequestParser()
-        parser.add_argument('mobile', requir=True, location='json', type=mobile_type)
-        parser.add_argument('code', requir=True, location='json', type=regex(r'\d{6}$'))
+        parser.add_argument('mobile', required=True, location='json', type=mobile_type)
+        parser.add_argument('code', required=True, location='json', type=regex(r'\d{6}$'))
         args = parser.parse_args()
         mobile = args.mobile
         code = args.code
@@ -45,7 +46,7 @@ class LoginResource(Resource):
         key = 'app:code:{}'.format(mobile)
         real_code = redis_client.get(key)
         if not real_code or real_code != code:
-            return {'message': 'Invaild Code', 'data': None}
+            return {'message': 'Invaild Code', 'data': None},400
         # 删除验证码
         # redis_client.delete(key)
         # 查询数据库
@@ -53,12 +54,13 @@ class LoginResource(Resource):
         if user:  # 有,更新最后登录时间
             user.last_login = datetime.now()
         else:  # 无,添加用户数据
-            user = User(mobile=mobile, name=mobile, last_login=datetime.noe())
+            user = User(mobile=mobile, name=mobile, last_login=datetime.now())
             db.session.add(user)
         db.session.commit()
 
         # 生成令牌
         token = generate_jwt({'userid': user.id},
-                             datetime.utcnow() + datetime.timedelta(days=current_app.config['JWT_SECRET']))
+                             datetime.utcnow() + timedelta(days=current_app.config['JWT_EXPIRE_DAYS']))
 
-        return {'toekn': token}, 201
+        return {'id':user.id,
+                'toekn': token}, 201

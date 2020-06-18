@@ -17,3 +17,5 @@ def get_userinfo():
         if data:
             #去除用户id ，使用g变量记录
             g.userid =data.get('userid')
+
+
