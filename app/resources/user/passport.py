@@ -60,7 +60,7 @@ class LoginResource(Resource):
 
         # 生成令牌
         token = generate_jwt({'userid': user.id},
-                             datetime.utcnow() + timedelta(days=current_app.config['JWT_EXPIRE_DAYS']))
+                             expiry=datetime.utcnow() + timedelta(days=current_app.config['JWT_EXPIRE_DAYS']))
 
-        return {'id':user.id,
-                'toekn': token}, 201
+        return {
+                'token': token}, 201

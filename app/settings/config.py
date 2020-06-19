@@ -17,7 +17,7 @@ class DefaultConfig:
     QINIU_ACCESS_KEY = 'Z3n7VHTzWjjTxiSQc1cLlvtjdBjdG6yIsRYXim54'
     QINIU_SECRET_KEY = 'OuU8PaON7VxJYiO7ER_uS_MIsx-PkmkgckiEDBeN'
     QINIU_BUCKET_NAME = 'zhdsh35'
-    QINIU_DOMAIN = 'http://qc3o3ps8s.bkt.clouddn.com'
+    QINIU_DOMAIN = 'http://qc3o3ps8s.bkt.clouddn.com/'
 
     CORS = ['http://127.0.0.1:5000']
     # CORS = ['http://0.0.0.0:8000']
