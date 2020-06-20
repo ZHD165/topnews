@@ -72,7 +72,10 @@ class ArticleContent(db.Model):
     article_id = db.Column(db.Integer, primary_key=True, doc='文章ID')
     content = db.Column(db.Text, doc='帖文内容')
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> fa4590cef3700165ff1893ad73eacf40e70c7aa3
 class Collection(db.Model):
     """
     用户收藏表
@@ -98,4 +101,8 @@ class Attitude(db.Model):
     id = db.Column(db.Integer, primary_key=True, doc='主键ID')
     user_id = db.Column(db.Integer, doc='用户ID')
     article_id = db.Column(db.Integer, doc='文章ID')
+<<<<<<< HEAD
     attitude = db.Column(db.Integer, doc='态度')
+=======
+    attitude = db.Column(db.Integer, doc='态度')
+>>>>>>> fa4590cef3700165ff1893ad73eacf40e70c7aa3

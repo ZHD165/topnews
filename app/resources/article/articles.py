@@ -1,11 +1,13 @@
 from datetime import datetime
 
+from flask import g
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
+from sqlalchemy.orm import load_only
 
 from app import db
-from models.article import Article, ArticleContent
-from models.user import User
+from models.article import Article, ArticleContent, Collection, Attitude
+from models.user import User, Relation
 from utils.constats import HOME_PRE_PAGE
 
 
@@ -83,8 +85,8 @@ class ArticleDetailResource(Resource):
             ArticleContent.content) \
             .join(User, Article.user_id == User.id) \
             .join(ArticleContent,
-                   Article.id==ArticleContent.article_id ) \
-            .filter(Article.id == article_id).first()
+
+                   Article.id==ArticleContent.article_id ) .filter(Article.id == article_id).first()
         article_data = {
             'art_id': data.id,
             'title': data.title,
@@ -96,6 +98,45 @@ class ArticleDetailResource(Resource):
             'is_followed': False,
             'attitude': -1,
             'is_collected': False}
+
+
+
+        """查询关系数据"""
+        # 获取参数
+        userid = g.userid
+
+        # 判断用户是否已登录
+
+        if userid:
+            # 查询用户关系  用户 -> 作者
+            relation_obj = Relation.query.options(
+                load_only(Relation.id)) \
+                .filter(Relation.user_id == userid,
+                        Relation.author_id == data.user_id,
+                        Relation.relation == Relation.RELATION.FOLLOW).first()
+
+            article_data['is_followed'] = True if relation_obj else False
+
+            # 查询用户对文章的态度  用户 -> 文章
+            collect = Collection.query.options(load_only(Collection.id)) \
+                .filter(Collection.user_id == userid,
+                        Collection.article_id == article_id,
+                        Collection.is_deleted == False).first()
+
+            atti_obj = article_data['is_collected'] = True if collect else False
+
+            # 查询收藏关系  用户 -> 文章
+            Attitude.query.options(load_only(Attitude.attitude)) \
+                .filter(Attitude.user_id == userid,
+                        Attitude.article_id == article_id).first()
+
+            if not atti_obj:
+                attitude = -1
+            else:
+                attitude = atti_obj.attitude
+
+            article_data['attitude'] = attitude
+
 
         # return {'data':article_data}
         return article_data
