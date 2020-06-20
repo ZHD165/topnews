@@ -1,17 +1,15 @@
 from datetime import datetime
-
 from flask import g
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 from sqlalchemy.orm import load_only
-
 from app import db
 from models.user import Relation, User
 from utils.decorators import login_required
 
 
 class FollowingUserResource(Resource):
-    mehod_decortors = {'post': [login_required]}
+    method_decorators = {'post': [login_required]}
 
     def post(self):
         """关注用户"""
@@ -49,3 +47,27 @@ class FollowingUserResource(Resource):
         db.session.commit()
         # 返回结果
         return {'target': target}
+
+
+class UnFollowingUserResource(Resource):
+    method_decorators = {'delete': [login_required]}
+
+    def delete(self, target):
+        """取消关注"""
+
+        # 获取参数
+        userid = g.userid
+
+        # 删除关系 （逻辑删除，将relation字段更新）
+        Relation.query.filter(Relation.user_id == userid,
+                              Relation.author_id == target,
+                              Relation.relation == Relation.RELATION.FOLLOW) \
+            .update({'relation': Relation.RELATION.FOLLOW, 'update_time': datetime.now()})
+
+        # 让作者的粉丝数量-1
+        User.query.filter(User.id == target).update({'fans_count': User.fans_count - 1})
+        # 让用户的关注数量-1
+        User.query.filter(User.id == userid).update({'following_count': User.following_count - 1})
+        db.session.commit()
+        # 返回结果
+        return {'message': 'ok'}
