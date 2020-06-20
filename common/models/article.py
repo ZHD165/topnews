@@ -1,5 +1,7 @@
 from datetime import  datetime
 
+from sqlalchemy.dialects.mysql import DATETIME
+
 from app import db
 
 
@@ -53,6 +55,17 @@ class Article(db.Model):
     channel_id = db.Column(db.Integer, doc='频道ID')
     title = db.Column(db.String(130), doc='标题')
     cover = db.Column(db.JSON, doc='封面')
-    ctime = db.Column(db.DateTime, default=datetime.now, doc='创建时间')
+    ctime = db.Column(DATETIME(fsp=3), default=datetime.now, doc='创建时间')
     status = db.Column(db.Integer, default=0, doc='帖文状态')
     comment_count = db.Column(db.Integer, default=0, doc='评论数')
+
+
+
+class ArticleContent(db.Model):
+    """
+    文章内容表
+    """
+    __tablename__ = 'news_article_content'
+
+    article_id = db.Column(db.Integer, primary_key=True, doc='文章ID')
+    content = db.Column(db.Text, doc='帖文内容')
