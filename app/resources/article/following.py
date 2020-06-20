@@ -71,3 +71,4 @@ class UnFollowingUserResource(Resource):
         db.session.commit()
         # 返回结果
         return {'message': 'ok'}
+
