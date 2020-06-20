@@ -1,6 +1,8 @@
 from flask import current_app
 
 
+
+
 def upload_file(data):
     from qiniu import Auth, put_data
 
@@ -29,9 +31,9 @@ def upload_file(data):
     #
 
 
-if __name__ == '__main__':
-    with open('/home/ubuntu/Picture/1001887.jpg','rb') as f:
-        file_bytes = f.read()
-
-        fiel_url = up_load_file(file_bytes)
-        print(fiel_url)
+# if __name__ == '__main__':
+#     with open('/home/ubuntu/Picture/1001887.jpg','rb') as f:
+#         file_bytes = f.read()
+#
+#         fiel_url = up_load_file(file_bytes)
+#         print(fiel_url)
