@@ -102,6 +102,7 @@ class ArticleDetailResource(Resource):
 
 
         """查询关系数据"""
+
         # 获取参数
         userid = g.userid
 
@@ -123,10 +124,10 @@ class ArticleDetailResource(Resource):
                         Collection.article_id == article_id,
                         Collection.is_deleted == False).first()
 
-            atti_obj = article_data['is_collected'] = True if collect else False
+            article_data['is_collected'] = True if collect else False
 
             # 查询收藏关系  用户 -> 文章
-            Attitude.query.options(load_only(Attitude.attitude)) \
+            atti_obj=Attitude.query.options(load_only(Attitude.attitude)) \
                 .filter(Attitude.user_id == userid,
                         Attitude.article_id == article_id).first()
 
