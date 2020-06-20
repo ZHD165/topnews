@@ -32,17 +32,13 @@ class User(db.Model):
             'fans_count': self.fans_count
         }
 
-<<<<<<< HEAD
-class Relation(db.Model):
-# 用户关系表
 
-=======
 
 class Relation(db.Model):
     """
     用户关系表
     """
->>>>>>> fa4590cef3700165ff1893ad73eacf40e70c7aa3
+
     __tablename__ = 'user_relation'
 
     class RELATION:
@@ -54,9 +50,5 @@ class Relation(db.Model):
     user_id = db.Column(db.Integer, doc='用户ID')
     author_id = db.Column(db.Integer, doc='目标用户ID')
     relation = db.Column(db.Integer, doc='关系')
-<<<<<<< HEAD
     update_time = db.Column(db.DateTime, default=datetime.now, doc='更新时间')
 
-=======
-    update_time = db.Column(db.DateTime, default=datetime.now, doc='更新时间')
->>>>>>> fa4590cef3700165ff1893ad73eacf40e70c7aa3
