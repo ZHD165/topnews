@@ -49,13 +49,14 @@ class ArticleListResource(Resource):
                     Article.ctime < date) \
             .order_by(Article.ctime.desc()) \
             .limit(HOME_PRE_PAGE).all()
+        print(data)
         # ctime 为日期时间对象
         # 序列化
         articles = [{
             'art_id': item.id,
             'title': item.title,
             'aut_id': item.user_id,
-            'pabdate': item.ctime.isoformat(),
+            'pubdate': item.ctime.isoformat(),
             'aut_name': item.name,
             'comm_count': item.comment_count,
             'cover': item.cover
@@ -82,7 +83,7 @@ class ArticleDetailResource(Resource):
             ArticleContent.content) \
             .join(User, Article.user_id == User.id) \
             .join(ArticleContent,
-                  ArticleContent.article_id == Article.id) \
+                   Article.id==ArticleContent.article_id ) \
             .filter(Article.id == article_id).first()
         article_data = {
             'art_id': data.id,
@@ -96,4 +97,5 @@ class ArticleDetailResource(Resource):
             'attitude': -1,
             'is_collected': False}
 
-        return {'data':article_data}
+        # return {'data':article_data}
+        return article_data
