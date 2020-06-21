@@ -44,14 +44,16 @@ class CommentsResource(Resource):
             })
             db.session.commit()
 
-            return {'com_id': sub_comment.id, 'target': target, 'parent_id': parent_id}
+            return {'com_id': sub_comment.id,
+                    'target': target, 'parent_id': parent_id}
         else:
             # 新增评论数据
             comment = Comment(user_id=userid, article_id=target,
                               content=content, parent_id=0)
             db.session.add(comment)
             # 让文章评论数量加1#
-            Article.query.filter(Article.id == target).update({'comment_count': Article.comment_count + 1})
+            Article.query.filter(Article.id == target)\
+                .update({'comment_count': Article.comment_count + 1})
             db.session.commit()
 
             #
@@ -125,6 +127,8 @@ class CommentsResource(Resource):
                 common_list.append(common_dict)
             # 使其按照评论列表点赞数从大到小排列
             common_list.sort(key=lambda obj: obj['like_count'], reverse=True)
+         
+            """
             """
         common_list = []
         for item in data:
@@ -141,9 +145,20 @@ class CommentsResource(Resource):
             common_list.append(common_dict)
         # 使其按照评论列表点赞数从大到小排列
         common_list.sort(key=lambda obj: obj['like_count'], reverse=True)
+        """
+        comment_list = [{
+            "com_id": item.id,
+            'aut_id': item.user_id,
+            'aut_name': item.name,
+            'aut_photo': item.profile_photo,
+            'pubdate': item.ctime.isoformat(),
+            'content': item.content,
+            'reply_count': item.reply_count,
+            'like_count': item.like_count
+        } for item in data]
 
         end_id = end_comment.id if end_comment else None
         # 本次请求中的最后一条id
         last_id = data[-1].id if data else None
-        return {'results': common_list, 'total_count': count,
+        return {'results': comment_list, 'total_count': count,
                 'end_id': end_id, 'last_id': last_id}
