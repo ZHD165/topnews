@@ -9,6 +9,6 @@ def login_required(f):
         if g.userid:  # 有用户id ，正常访问
             return f(*args, **kwargs)
         else:  # 如果没有，返回错误信息
-            return {'message': 'Invlid Token', 'data': None}, 401
+            return {'message': 'Invalid Token', 'data': None}, 401
 
     return wrapper

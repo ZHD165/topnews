@@ -6,7 +6,6 @@ from sqlalchemy.orm import load_only
 
 
 from app import db
-
 from models.article import Comment, Article
 from models.user import User
 from utils.decorators import login_required

@@ -18,14 +18,3 @@ article_api.representation('application/json')(output_json)
 article_api.add_resource(AllChannelResource, '/channels')
 
 article_api.add_resource(ArticleListResource, '/articles')
-<<<<<<< Updated upstream
-=======
-
-article_api.add_resource(ArticleDetailResource, '/articles/<int:article_id>')
-
-article_api.add_resource(FollowingUserResource, '/user/followings')
-
-article_api.add_resource(UnFollowingUserResource, '/user/followings/<int:target>')
-
-article_api.add_resource(CommentsResource,'/comments')
->>>>>>> Stashed changes
