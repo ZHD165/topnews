@@ -60,23 +60,37 @@ class CommentsResource(Resource):
             .join(User, Comment.user_id == User.id) \
             .filter(Comment.article_id == source, Comment.id > offset) \
             .limit(limit).all()
+        # .order_by(Comment.like_count.desc())\
+        common_list=[]
+        for item in data:
+            common_dict={
+              'com_di': item.id,
+              'aut_id': item.user_id,
+              'aut_name': item.name,
+              'aut_photo': item.profile_photo,
+              'pubdate': item.ctime.isoformat(),
+              'content': item.content,
+              'reply_count': item.reply_count,
+              'like_count': item.like_count
+            }
+            common_list.append(common_dict)
+        common_list.sort(key=lambda obj:obj['like_count'], reverse=True )
 
-        common_list = [{
-            'com_di': item.id,
-            'aut_id': item.user_id,
-            'aut_name': item.name,
-            'aut_photo': item.profile_photo,
-            'pubdate': item.ctime.isoformat(),
-            'content': item.content,
-            'reply_count': item.reply_count,
-            'like_count': item.like_count
-        } for item in data]
+        # common_list = [{
+        #     'com_di': item.id,
+        #     'aut_id': item.user_id,
+        #     'aut_name': item.name,
+        #     'aut_photo': item.profile_photo,
+        #     'pubdate': item.ctime.isoformat(),
+        #     'content': item.content,
+        #     'reply_count': item.reply_count,
+        #     'like_count': item.like_count
+        # } for item in data ]
         # 构造响应数据
         count = Comment.query.filter(Comment.article_id == source).count()
 
-        end_comment = Comment.query.options(load_only(Comment.id)) \
-            .filter(Comment.article_id == source) \
-            .order_by(Comment.id.desc()).first()
+        # end_comment = Comment.query.options(load_only(Comment.id)) .filter(Comment.article_id == source) .order_by(Comment.id.desc()).first()
+        end_comment = Comment.query.options(load_only(Comment.article_id == source)).order_by(Comment.id.desc()).first()
         end_id = end_comment.id if end_comment else None
         last_id = data[-1].id if data else None
         return {'results': common_list, 'total_count': count,
