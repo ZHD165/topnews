@@ -12,10 +12,11 @@ class CommentsResource(Resource):
 
     def post(self):
         """发布品论"""
-
+        #获取参数
         userid = g.userid
         parser=RequestParser()
         parser.add_argument('target', required=True,location='json',type= int)
+        # 正则表达式：.代表任何内容，+ 至少一位
         parser.add_argument('content', required=True,location='json',type= regex(r'.+'))
         args=parser.parse_args()
         target = args.target
@@ -23,8 +24,8 @@ class CommentsResource(Resource):
 
         #生成评论记录
         comment=Comment(user_id=userid,article_id=target,content=content,parent_id=0)
-        db.session.commit()
-
+        db.session.add(comment)
+        # 让文章评论数量加1#
         Article.query.filter(Article.id ==target).update({'comment_count':Article.comment_count+1})
         db.session.commit()
 
