@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from app import db
-
+from datetime import datetime
 
 class User(db.Model):
     """
@@ -33,10 +33,12 @@ class User(db.Model):
         }
 
 
+
 class Relation(db.Model):
     """
     用户关系表
     """
+
     __tablename__ = 'user_relation'
 
     class RELATION:
@@ -49,3 +51,4 @@ class Relation(db.Model):
     author_id = db.Column(db.Integer, doc='目标用户ID')
     relation = db.Column(db.Integer, doc='关系')
     update_time = db.Column(db.DateTime, default=datetime.now, doc='更新时间')
+

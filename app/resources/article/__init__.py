@@ -3,6 +3,7 @@ from flask_restful import Api
 from app.resources.article.articles import ArticleListResource, ArticleDetailResource
 from app.resources.article.channel import AllChannelResource
 from utils.constats import BASE_URL_PRIFIX
+from .comment import CommentsResource
 from .following import UnFollowingUserResource, FollowingUserResource
 
 # 1.创建蓝图对象
@@ -24,3 +25,5 @@ article_api.add_resource(ArticleDetailResource, '/articles/<int:article_id>')
 article_api.add_resource(FollowingUserResource, '/user/followings')
 
 article_api.add_resource(UnFollowingUserResource, '/user/followings/<int:target>')
+
+article_api.add_resource(CommentsResource,'/comments')

@@ -85,8 +85,8 @@ class ArticleDetailResource(Resource):
             ArticleContent.content) \
             .join(User, Article.user_id == User.id) \
             .join(ArticleContent,
-                  Article.id == ArticleContent.article_id) \
-            .filter(Article.id == article_id).first()
+
+                   Article.id==ArticleContent.article_id ) .filter(Article.id == article_id).first()
         article_data = {
             'art_id': data.id,
             'title': data.title,
@@ -98,6 +98,8 @@ class ArticleDetailResource(Resource):
             'is_followed': False,
             'attitude': -1,
             'is_collected': False}
+
+
 
         """查询关系数据"""
 
@@ -135,6 +137,7 @@ class ArticleDetailResource(Resource):
                 attitude = atti_obj.attitude
 
             article_data['attitude'] = attitude
+
 
         # return {'data':article_data}
         return article_data

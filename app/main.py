@@ -1,4 +1,6 @@
+# coding=utf-8
 #创建web 应用
+
 from app import create_app
 from flask import jsonify
 
