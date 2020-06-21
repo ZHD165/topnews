@@ -2,8 +2,11 @@ from flask import g
 from flask_restful import Resource
 from flask_restful.inputs import regex
 from flask_restful.reqparse import RequestParser
+from sqlalchemy.orm import load_only
+
 from app import db
 from models.article import Comment, Article
+from models.user import User
 from utils.decorators import login_required
 
 
@@ -31,3 +34,51 @@ class CommentsResource(Resource):
 
         #
         return {'com_id':comment.id,'target':target}
+
+    def get(self):
+        """获取评论列表"""
+        # 获取参数
+        parser = RequestParser()
+        parser.add_argument('source', required=True, location='json', type=int)
+        parser.add_argument('offset',default =0 , location='json', type=int)
+        #基于该字段进行分页查询
+        parser.add_argument('limit', required=True, location='json', type=int)
+        args = parser.parse_args()
+        source = args.source
+        offset = args.offset
+        limit = args.limit
+
+
+        # 数据库查询 该文章的评论 & 分页　＆（评论ｉｄ＞　offset参数）
+        data = db.session.query(Comment.id,
+                         Comment.user_id,
+                         User.name,
+                         User.profile_photo,
+                         Comment.ctime,
+                         Comment.content,
+                         Comment.reply_count,
+                         Comment.like_count)\
+        .join(User,Comment.user_id ==User.id)\
+        .filter({Comment.article_id == source, Comment.id > offset})\
+        .limit(limit).all()
+
+        common_list = [{
+            'com_di':item.id,
+            'aut_id':item.user_id,
+            'aut_name':item.name,
+            'aut_photo':item.profile_photo,
+            'pubdate': item.ctime.isoformat(),
+            'content':item.content,
+            'reply_count':item.reply_count,
+            'like_count':item.like_count
+        } for item in data]
+        #构造响应数据
+        count = Comment.query.filter(Comment.article_id ==source).count()
+
+        end_comment = Comment.query.options(load_only(Comment.id))\
+            .filter(Comment.article_id == source)\
+            .order_by(Comment.id.desc()).first()
+        end_id = end_comment.id if end_comment else None
+        last_id = data[-1].id if data else None
+        return  {'results':common_list , 'total_count':count,
+                 'end_id':end_id, 'last_id':last_id}
