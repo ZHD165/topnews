@@ -74,6 +74,7 @@ class CommentsResource(Resource):
               'like_count': item.like_count
             }
             common_list.append(common_dict)
+        #使其按照评论列表点赞数从大到小排列
         common_list.sort(key=lambda obj:obj['like_count'], reverse=True )
 
         # common_list = [{
