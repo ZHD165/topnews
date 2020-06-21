@@ -2,7 +2,6 @@ from flask import g
 from flask_restful import Resource
 from flask_restful.inputs import regex
 from flask_restful.reqparse import RequestParser
-
 from app import db
 from models.article import Comment, Article
 from utils.decorators import login_required

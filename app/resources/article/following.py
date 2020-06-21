@@ -60,6 +60,7 @@ class FollowingUserResource(Resource):
         per_page = args.per_page
 
         #查询数据
+        #error_out 默认为True，如果分页越界则抛出404，设置为False则不胡报错，返回空数据
         pn = User.query.options(load_only(User.id,
                                           User.name,
                                           User.profile_photo))\
@@ -67,21 +68,38 @@ class FollowingUserResource(Resource):
         .filter(Relation.user_id == userid,
                 Relation.relation ==Relation.RELATION.FOLLOW)\
         .order_by(Relation.update_time.desc())\
-        .paginate(page,per_page)
+        .paginate(page,per_page,error_out=False)
+
+        """相互关注"""
+        #查询当前的粉丝列表
+        fans_list = Relation.query.options(load_only(Relation.user_id))\
+        .filter(Relation.author_id == userid ,
+                Relation.relation ==Relation.RELATION.FOLLOW).all()
 
         #序列化
-
-        au_list = [{
+        author_list=[]
+        for item in pn.items:
+            au_list = {
             'id':item.id,
             'name':item.name,
             'photo':item.profile_photo,
             'fans_count':item.fans_count,
             'mutual_follow':False
-        }for item in pn.items]
+            }
+            #判断去除的作者是否在当前用户的粉丝列表中（如果在，则为相互关注）
+            for fans in fans_list:
+                if fans.user_id ==item.id:
+                    au_list['mutual_follow']=True
+                    break
+            author_list.append(au_list)
+
+
 
         #返回数据
-        return {'results':au_list , 'per_page':per_page ,
+        return {'results':author_list , 'per_page':per_page ,
                 'page': pn.page ,'total_count':pn.total}
+
+
 class UnFollowingUserResource(Resource):
     method_decorators = {'delete': [login_required]}
 
