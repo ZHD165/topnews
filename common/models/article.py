@@ -118,3 +118,6 @@ class Comment(db.Model):
     ctime = db.Column(db.DateTime, default=datetime.now, doc='创建时间')
     like_count = db.Column(db.Integer, default=0, doc='点赞数')
     content = db.Column(db.String(200), doc='评论内容')
+    __mapper_args__ = {
+        "order_by": like_count.desc()
+    }

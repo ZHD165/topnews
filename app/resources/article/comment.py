@@ -111,10 +111,10 @@ class CommentsResource(Resource):
             # 某条评论的的回复列表中最后一条回复的记录
             end_comment = Comment.query.options(load_only(Comment.id)).filter(Comment.parent_id == source) \
                 .order_by(Comment.id.desc()).first()
-            """
-            common_list = []
-            for item in data:
-                common_dict = {
+        """
+        common_list = []
+        for item in data:
+            common_dict = {
                     'com_di': item.id,
                     'aut_id': item.user_id,
                     'aut_name': item.name,
@@ -124,29 +124,12 @@ class CommentsResource(Resource):
                     'reply_count': item.reply_count,
                     'like_count': item.like_count
                 }
-                common_list.append(common_dict)
-            # 使其按照评论列表点赞数从大到小排列
-            common_list.sort(key=lambda obj: obj['like_count'], reverse=True)
-         
-            """
-            """
-        common_list = []
-        for item in data:
-            common_dict = {
-                'com_di': item.id,
-                'aut_id': item.user_id,
-                'aut_name': item.name,
-                'aut_photo': item.profile_photo,
-                'pubdate': item.ctime.isoformat(),
-                'content': item.content,
-                'reply_count': item.reply_count,
-                'like_count': item.like_count
-            }
             common_list.append(common_dict)
-        # 使其按照评论列表点赞数从大到小排列
+            # 使其按照评论列表点赞数从大到小排列
         common_list.sort(key=lambda obj: obj['like_count'], reverse=True)
+         
         """
-        comment_list = [{
+        common_list = [{
             "com_id": item.id,
             'aut_id': item.user_id,
             'aut_name': item.name,
@@ -160,5 +143,5 @@ class CommentsResource(Resource):
         end_id = end_comment.id if end_comment else None
         # 本次请求中的最后一条id
         last_id = data[-1].id if data else None
-        return {'results': comment_list, 'total_count': count,
+        return {'results': common_list, 'total_count': count,
                 'end_id': end_id, 'last_id': last_id}
