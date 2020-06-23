@@ -10,7 +10,7 @@ BASE_DIR = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, BASE_DIR + '/common')
 from utils.constats import EXTIA_ENV_CONFIG
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_migrate import Migrate
 
 
 # sqlalchemy组件对象
@@ -19,7 +19,6 @@ from models.routing_db.routing_sqlalchemy import RoutingSQLAlchemy
 
 # mysql数据库操作对象
 db = RoutingSQLAlchemy()
-from flask_migrate import Migrate
 # redis数据库操作对象
 redis_client = None  # type: StrictRedis
 from redis import StrictRedis
@@ -61,7 +60,7 @@ def register_extensions(app:Flask):
     # 数据迁移组件初始化
     Migrate(app, db)
 
-    from models import user
+
     # 添加请求钩子
     from utils.middlewares import get_userinfo
     app.before_request(get_userinfo)
@@ -81,12 +80,6 @@ def register_bp(app: Flask):
 
     from app.resources.article import  article_bp
     app.register_blueprint(article_bp)
-
-
-
-
-
-
 
 def create_app(type):
     """创建应用 和 组件初始化"""

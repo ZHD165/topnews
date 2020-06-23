@@ -1,25 +1,22 @@
-# routing_db/routing_sqlalchemy.py
-
 import random
 from flask_sqlalchemy import SQLAlchemy, SignallingSession, get_state
 from sqlalchemy import orm
+from sqlalchemy.sql.dml import UpdateBase
 
 
 # 设置多个数据库的URI (用于数据操作)
 # app.config['SQLALCHEMY_BINDS'] = {
-#     'master': 'mysql://root:mysql@568.105.134:3306/test31',
-#     'slave1': 'mysql://root:mysql@68.105.134:8306/test31',
+#     'master': 'mysql://root:mysql@192.168.105.134:3306/test31',
+#     'slave1': 'mysql://root:mysql@192.168.105.134:8306/test31',
 #     'slave2': 'mysql://root:mysql@192.168.105.134:3306/test31'
 # }
-# from sqlalchemy.sql.dml import UpdateBase
-from sqlalchemy.sql.dml import UpdateBase
 
 
 class RoutingSession(SignallingSession):
     """自定义Session类, 继承SignallingSession"""
-    def __init__(self, db ,autocommit =False, autoflush = True,**options):
-        #todo
-        super(RoutingSession, self).__init__(db,autocommit,autoflush,**options)
+
+    def __init__(self, db, autocommit=False, autoflush=True, **options):
+        super(RoutingSession, self).__init__(db, autocommit, autoflush, **options)
         # 每个Session(请求), 随机一次从库, 避免每个请求访问多个从库影响性能
         self.slave = random.choice(['slave1', 'slave2'])
 
@@ -39,7 +36,7 @@ class RoutingSession(SignallingSession):
             info = getattr(persist_selectable, 'info', {})
             bind_key = info.get('bind_key')  # 查询模型类是否指定了访问的数据库
 
-            if bind_key is not None: #todo # 如果该模型类已指定数据库, 使用指定的数据库
+            if bind_key is not None:  # 如果该模型类已指定数据库, 使用指定的数据库
                 return state.db.get_engine(self.app, bind=bind_key)
 
         if self._flushing or isinstance(clause, UpdateBase):  # 如果模型类未指定数据库, 判断是否为写操作
@@ -53,6 +50,7 @@ class RoutingSession(SignallingSession):
 
 class RoutingSQLAlchemy(SQLAlchemy):
     """自定义SQLALchemy类"""
+
     def create_session(self, options):
         """重写create_session方法: 使用自定义Session类"""
         return orm.sessionmaker(class_=RoutingSession, db=self, **options)
