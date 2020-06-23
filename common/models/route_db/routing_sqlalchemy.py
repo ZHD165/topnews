@@ -11,6 +11,8 @@ from sqlalchemy import orm
 #     'slave1': 'mysql://root:mysql@68.105.134:8306/test31',
 #     'slave2': 'mysql://root:mysql@192.168.105.134:3306/test31'
 # }
+# from sqlalchemy.sql.dml import UpdateBase
+from sqlalchemy.sql.dml import UpdateBase
 
 
 class RoutingSession(SignallingSession):
