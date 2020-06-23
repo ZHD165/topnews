@@ -14,8 +14,11 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 # sqlalchemy组件对象
-db = SQLAlchemy()
+# db = SQLAlchemy()
+from models.routing_db.routing_sqlalchemy import RoutingSQLAlchemy
 
+# mysql数据库操作对象
+db = RoutingSQLAlchemy()
 from flask_migrate import Migrate
 # redis数据库操作对象
 redis_client = None  # type: StrictRedis

@@ -4,7 +4,11 @@ class DefaultConfig:
     SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@192.168.150.129:3306/hm_topnews'  # 连接地址
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # 是否追踪数据变化
     SQLALCHEMY_ECHO = False  # 是否打印底层执行的SQL
-
+    SQLALCHEMY_BINDS = {  # 主从数据库的URI
+        "master": 'mysql://root:mysql@192.168.150.129:3306/hm_topnews',
+        "slave1": 'mysql://root:mysql@192.168.150.129:3306/hm_topnews',
+        "slave2": 'mysql://root:mysql@192.168.150.129:8306/hm_topnews'
+    }
     # redis配置
     REDIS_HOST = '192.168.150.129'  # ip
     REDIS_PORT = 6381  # 端口
