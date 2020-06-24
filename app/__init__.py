@@ -74,12 +74,6 @@ def register_extensions(app: Flask):
     # 导入模型类
     from models import user, article
 
-    # 哨兵客户端
-    global redis_master, redis_slave
-    sentinel = Sentinel(app.config['SENTINEL_LIST'])
-    redis_master = sentinel.master_for(app.config['SERVICE_NAME'], decode_responses=True)
-    redis_slave = sentinel.slave_for(app.config['SERVICE_NAME'], decode_responses=True)
-
 
 def register_bp(app: Flask):
     """注册蓝图"""
