@@ -2,16 +2,14 @@ import sys
 from os.path import *
 from flask import Flask
 from flask_cors import CORS
-
+from redis.sentinel import Sentinel
 from app.settings.config import config_dict
-
 
 BASE_DIR = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, BASE_DIR + '/common')
 from utils.constats import EXTIA_ENV_CONFIG
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
 
 # sqlalchemy组件对象
 # db = SQLAlchemy()
@@ -22,6 +20,11 @@ db = RoutingSQLAlchemy()
 # redis数据库操作对象
 redis_client = None  # type: StrictRedis
 from redis import StrictRedis
+
+# redis主从数据库
+redis_master = None  # type: StrictRedis
+redis_slave = None  # type: StrictRedis
+
 
 def create_flask_app(type):
     """创建flask应用"""
@@ -40,7 +43,7 @@ def create_flask_app(type):
     return app
 
 
-def register_extensions(app:Flask):
+def register_extensions(app: Flask):
     """组件初始化"""
 
     # SQLAlchemy组件初始化
@@ -48,11 +51,12 @@ def register_extensions(app:Flask):
 
     db.init_app(app)
 
-
-
     # redis组件初始化
-    global redis_client
-    redis_client = StrictRedis(host=app.config['REDIS_HOST'], port=app.config['REDIS_PORT'], decode_responses=True)
+    # 哨兵客户端
+    global redis_master, redis_slave
+    sentinel = Sentinel(app.config['SENTINEL_LIST'])
+    redis_master = sentinel.master_for(app.config['SERVICE_NAME'], decode_responses=True)
+    redis_slave = sentinel.slave_for(app.config['SERVICE_NAME'], decode_responses=True)
     # 添加转换器
     from utils.converters import register_converters
     register_converters(app)
@@ -60,16 +64,22 @@ def register_extensions(app:Flask):
     # 数据迁移组件初始化
     Migrate(app, db)
 
-
     # 添加请求钩子
     from utils.middlewares import get_userinfo
     app.before_request(get_userinfo)
 
     #
-    CORS(app, supports_credentials= True)
+    CORS(app, supports_credentials=True)
 
     # 导入模型类
     from models import user, article
+
+    # 哨兵客户端
+    global redis_master, redis_slave
+    sentinel = Sentinel(app.config['SENTINEL_LIST'])
+    redis_master = sentinel.master_for(app.config['SERVICE_NAME'], decode_responses=True)
+    redis_slave = sentinel.slave_for(app.config['SERVICE_NAME'], decode_responses=True)
+
 
 def register_bp(app: Flask):
     """注册蓝图"""
@@ -78,8 +88,9 @@ def register_bp(app: Flask):
     from app.resources.user import user_bp
     app.register_blueprint(user_bp)
 
-    from app.resources.article import  article_bp
+    from app.resources.article import article_bp
     app.register_blueprint(article_bp)
+
 
 def create_app(type):
     """创建应用 和 组件初始化"""
