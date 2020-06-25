@@ -26,16 +26,20 @@ class DefaultConfig:
     CORS = ['http://127.0.0.1:5000']
     # CORS = ['http://0.0.0.0:8000']
 
+
+    SERVICE_NAME = 'mymaster'  # 哨兵配置的主数据库别名
     # 设置哨兵的ip和端口
     SENTINEL_LIST = [
         ('192.168.150.130', 26380),
         ('192.168.150.130', 26381),
         ('192.168.150.130', 26382),
     ]
-
-    SERVICE_NAME = 'mymaster'  # 哨兵配置的主数据库别名
-
-
+    # redis集群配置
+    CLUSTER_NODES = [  # 集群中主数据库的ip和端口号
+            {'host': '192.168.150.130', 'port': 7000},
+            {'host': '192.168.150.130', 'port': 7001},
+            {'host': '192.168.150.130', 'port': 7002},
+    ]
 config_dict = {
     'dev': DefaultConfig
 }

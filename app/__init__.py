@@ -4,12 +4,14 @@ from flask import Flask
 from flask_cors import CORS
 from redis.sentinel import Sentinel
 from app.settings.config import config_dict
-
+# 将common路径添加到模块查询路径中
+from rediscluster import RedisCluster
 BASE_DIR = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, BASE_DIR + '/common')
 from utils.constats import EXTIA_ENV_CONFIG
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+
 
 # sqlalchemy组件对象
 # db = SQLAlchemy()
@@ -18,13 +20,16 @@ from models.routing_db.routing_sqlalchemy import RoutingSQLAlchemy
 # mysql数据库操作对象
 db = RoutingSQLAlchemy()
 # redis数据库操作对象
-redis_client = None  # type: StrictRedis
+# redis_client = None  # type: StrictRedis
+
+
 from redis import StrictRedis
 
 # redis主从数据库
 redis_master = None  # type: StrictRedis
 redis_slave = None  # type: StrictRedis
-
+# 创建集群客户端对象
+redis_cluster = None  # type: RedisCluster
 
 def create_flask_app(type):
     """创建flask应用"""
@@ -52,11 +57,9 @@ def register_extensions(app: Flask):
     db.init_app(app)
 
     # redis组件初始化
-    # 哨兵客户端
-    global redis_master, redis_slave
-    sentinel = Sentinel(app.config['SENTINEL_LIST'])
-    redis_master = sentinel.master_for(app.config['SERVICE_NAME'], decode_responses=True)
-    redis_slave = sentinel.slave_for(app.config['SERVICE_NAME'], decode_responses=True)
+    # global redis_client
+    # redis_client = StrictRedis(host=app.config['REDIS_HOST'], port=app.config['REDIS_PORT'], decode_responses=True)
+
     # 添加转换器
     from utils.converters import register_converters
     register_converters(app)
@@ -73,6 +76,17 @@ def register_extensions(app: Flask):
 
     # 导入模型类
     from models import user, article
+    global redis_master, redis_slave
+    from redis.sentinel import Sentinel
+    # 创建哨兵客户端
+    sentinel_client = Sentinel(app.config['SENTINEL_LIST'])
+    # 获取主从数据库对象
+    redis_master = sentinel_client.master_for(app.config['SERVICE_NAME'])
+    redis_slave = sentinel_client.slave_for(app.config['SERVICE_NAME'])
+
+    # 创建redis集群客户端
+    global redis_cluster
+    redis_cluster = RedisCluster(startup_nodes=app.config['CLUSTER_NODES'], decode_responses=True)
 
 
 def register_bp(app: Flask):
