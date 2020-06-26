@@ -1,7 +1,7 @@
 .idea
 *py[cod]
 migrations
-七牛
+七牛.py
 图片检测
 .qiniu*
 scripts
