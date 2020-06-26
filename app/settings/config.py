@@ -9,9 +9,9 @@ class DefaultConfig:
         "slave1": 'mysql://root:mysql@192.168.150.130:3306/hm_topnews',
         "slave2": 'mysql://root:mysql@192.168.150.130:8306/hm_topnews'
     }
-    # redis配置
-    REDIS_HOST = '192.168.150.130'  # ip
-    REDIS_PORT = 6381  # 端口
+    # # redis配置
+    # REDIS_HOST = '192.168.150.130'  # ip
+    # REDIS_PORT = 6381  # 端口
 
     # JWT
     JWT_SECRET = 'TPmi4aLWRbyVq8zu9v82dWYW17/z+UvRnYTt4P6fAXA'  # 秘钥
