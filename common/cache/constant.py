@@ -21,24 +21,24 @@ import random
 
 # 方案三 : 使用类分装过期时间
 
-class BaseCacheTTl:
-    TTl = 60 * 60 * 2  # 过期时间
+class BaseCacheTTL:
+    TTL = 60 * 60 * 2  # 过期时间
     MAX_DELTA = 60 * 10  # 随机最大值
 
     @classmethod
     def get_val(cls):
-        return cls.TTl + random.randint(0, cls.MAX_DELTA)
+        return cls.TTL + random.randint(0, cls.MAX_DELTA)
 
 
-class UserCacheTTL(BaseCacheTTl):
+class UserCacheTTL(BaseCacheTTL):
     """用户缓存-过期时间类"""
     pass
 
 
-class UserNotExistTTL(BaseCacheTTl):
+class UserNotExistTTL(BaseCacheTTL):
     TTL = 60 * 10
     MAX_DELTA = 60
 
 
-class ArticleCacheTTL(BaseCacheTTl):
+class ArticleCacheTTL(BaseCacheTTL):
     TTL = 60 * 60 * 5

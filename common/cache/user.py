@@ -35,8 +35,7 @@ class UserCache:
                                                 User.introduction,
                                                 User.article_count,
                                                 User.fans_count,
-                                                User.following_count)) \
-                .filter(User.id == self.userid).first()
+                                                User.following_count)).filter(User.id == self.userid).first()
             if user:  # 数据库中如果有，进行数据回填，返回数据
                 # 模型转字典
                 user_dict = user.to_dict()
