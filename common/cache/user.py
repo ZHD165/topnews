@@ -25,6 +25,7 @@ class UserCache:
                 return None
             else:
                 # 不是默认值，直接返回数据
+                print('从缓存中获取数据')
                 return data
 
         else:  # 缓存中没有，进行数据库查询
@@ -41,11 +42,12 @@ class UserCache:
                 user_dict = user.to_dict()
                 # 数据回填到redis中
                 redis_cluster.hmset(self.key, user_dict)
-                #方案一
+                # 方案一
                 # from cache.constant import UserCacheTTl
                 # redis_cluster.expire(self.key, 60 * 60 * 2,UserCacheTTl)
                 # 方案二
-                # redis_cluster.expire(self.key, get_val(UserCacheTTL,UserCacheMaxDelta))
+                # redis_cluster.expire(self.key, get_val(UserCacheTTL,UserCacheMaxDelta))3
+                # 方案三
                 redis_cluster.expire(self.key, UserCacheTTL.get_val())
 
                 print('查询数据库')
