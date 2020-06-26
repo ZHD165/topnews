@@ -41,7 +41,9 @@ class CurrentUserResource(Resource):
         # 获取用户id
 
         userid = g.userid
+        # todo ： 从缓存层中读取数据
         user_cache = UserCache(userid).get()
+
         if user_cache:
             return user_cache
         else:

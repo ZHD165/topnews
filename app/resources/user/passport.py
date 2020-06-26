@@ -6,6 +6,7 @@ from flask_restful.reqparse import RequestParser
 from sqlalchemy.orm import load_only
 from flask_restful import Resource
 from app import  db,redis_cluster
+from cache.user import UserCache
 from models.user import User
 from utils.constats import SMS_CODE_EXPIRE
 from utils.jwt_util import generate_jwt
@@ -57,6 +58,8 @@ class LoginResource(Resource):
             user = User(mobile=mobile, name=mobile, last_login=datetime.now())
             db.session.add(user)
         db.session.commit()
+        # 对应的用户信息发生更新后, 将缓存数据清空
+        UserCache(user.id).clear()
 
         # 生成令牌
         token = generate_jwt({'userid': user.id},

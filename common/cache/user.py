@@ -41,6 +41,7 @@ class UserCache:
                 # 模型转字典
                 user_dict = user.to_dict()
                 # 数据回填到redis中
+                #todo
                 redis_cluster.hmset(self.key, user_dict)
                 # 方案一
                 # from cache.constant import UserCacheTTl
@@ -56,3 +57,8 @@ class UserCache:
                 redis_cluster.hmset(self.key, {'null': 1})
                 redis_cluster.expire(self.key, UserNotExistTTL.get_val())
                 return None
+    def clear(self):
+
+        """清除缓存"""
+
+        redis_cluster.delete(self.key)
