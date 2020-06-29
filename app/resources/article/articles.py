@@ -51,7 +51,7 @@ class ArticleListResource(Resource):
                     Article.ctime < date) \
             .order_by(Article.ctime.desc()) \
             .limit(HOME_PRE_PAGE).all()
-        print(data)
+        # print(data)
         # ctime 为日期时间对象
         # 序列化
         articles = [{

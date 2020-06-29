@@ -42,3 +42,7 @@ class UserNotExistTTL(BaseCacheTTL):
 
 class ArticleCacheTTL(BaseCacheTTL):
     TTL = 60 * 60 * 5
+
+class UserFollowCacheTTL(BaseCacheTTL):
+    """用户关注缓存-过期时间类"""
+    TTL = 60 * 60 * 5
